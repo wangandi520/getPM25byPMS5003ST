@@ -1,0 +1,4 @@
+CREATE TABLE `pm` (
+  `data` varchar(60) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=gbk

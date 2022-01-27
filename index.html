@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>空气质量</title>
+<style>
+html,body{
+margin:0px 0px 0px 0px;
+padding:0px 0px 0px 0px;
+height:100%;
+}
+#showLayout{
+width:100%;
+height:100%;
+}
+#showLayout p:nth-child(1){
+background:#e7f7ed;
+}
+#showLayout p:nth-child(2){
+background:#f9f5e3;
+}
+#showLayout p:nth-child(3){
+background:#fbefe3;
+}
+#showLayout p:nth-child(4){
+background:#fbe2e2;
+}
+#showLayout p:nth-child(5){
+background:#f4e3f5;
+}
+#showLayout p:nth-child(6){
+background:#ede2ed;
+}
+#showLayout p{
+margin:0px 0px 0px 0px;
+padding:10px 10px 10px 10px;
+width:5%;
+height:16.67%;
+}
+#detailLayout{
+display:none;
+
+}#detailLayout p{
+margin:0px 0px 0px 0px;
+padding:0px 0px 0px 0px;
+}
+#dataLayout{
+display:none;
+}
+p{
+font-size:40pt;
+}
+</style>
+<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div id="showLayout">
+<p></p><p></p><p></p><p></p><p></p><p></p>
+</div>
+<div id="detailLayout">
+</div>
+<div id="dataLayout">
+<div id="data">
+</div>
+<div id="date">
+</div>
+</div>
+</body>
+</html>
+<script type="text/javascript" language="JavaScript">
+function getData(){
+	$.ajax({
+        url: "getData.php",
+        dataType: "json",
+		async: false,
+        type: "POST",
+        success: function (data){
+            $('#data').html(data.pm);
+            $('#date').html(data.date);
+        }
+    });
+}
+$(document).ready(function(){
+	getData();
+	var number = $('#data').html();
+	//number = number.substring(1,number.length-1);
+	number = number.split(',');
+	var backgroundColor = "white";
+	var fontColor = "black";
+	var airQuality = "无";
+	var index = 0;
+	if (number[4] >= 0 && number[4] <= 12){
+		fontColor = "#acddc6";
+		airQuality = "优";
+		index = 0;
+	}
+	if (number[4] > 12 && number[4] <= 35){
+		fontColor = "#e0b902";
+		airQuality = "良";
+		index = 1;
+	}
+	if (number[4] > 35 && number[4] <= 55){
+		fontColor = "#f08008";
+		airQuality = "轻度污染";
+		index = 2;
+	}
+	if (number[4] > 55 && number[4] <= 150){
+		fontColor = "#db2d01";
+		airQuality = "中度污染";
+		index = 3;
+	}
+	if (number[4] > 150 && number[4] <= 250){
+		fontColor = "#c870cd";
+		airQuality = "重度污染";
+		index = 4;
+	}
+	if (number[4] > 250 && number[4] <= 1000){
+		fontColor = "#8f6091";
+		airQuality = "严重污染";
+		index = 5;
+	}
+	$('#showLayout p:eq(' + index + ')').html('<span>' + airQuality + ':' + number[4] + 'μg/m³</span><br/><span>温度:' + number[13] + '℃ 湿度:' + number[14] + '%</span>');
+	$('#showLayout p:eq(' + index + ')').css("color",fontColor);
+	$('#showLayout p:eq(' + index + ')').css("text-align","center");
+	$('#showLayout p:eq(' + index + ')').css('width','100%');
+	var fontSize = $(window).height() / 16;
+	$('p').css('font-size',fontSize);
+	$('#showLayout p:eq(' + index + ')').click(function(){
+		if($('#detailLayout').css('display') == 'none'){
+			$('#detailLayout').show();
+			$('#detailLayout').html('<p>数据更新时间:'+$('#date').html()+'</p><p>数据测量位置:广东省广州市</p><p>标准颗粒物质量浓度(CF=1)</p><p>PM 1.0: '+number[0]+' μg/m³</p><p>PM 2.5: '+number[1]+' μg/m³</p><p>PM 10 : '+number[2]+' μg/m³</p><p>大气环境下颗粒物质量浓度</p><p>PM 1.0: '+number[3]+' μg/m³</p><p>PM 2.5: '+number[4]+' μg/m³</p><p>PM 10 : '+number[5]+' μg/m³</p><p>0.1升空气中直径大于某值的颗粒物个数</p><p>>0.3μm: '+number[6]+'/0.1L</p><p>>0.5μm: '+number[7]+'/0.1L</p><p>>1.0μm: '+number[8]+'/0.1L</p><p>>2.5μm: '+number[9]+'/0.1L</p><p>>5.0μm: '+number[10]+'/0.1L</p><p>>10 μm: '+number[11]+'/0.1L</p><p>甲醛: '+number[12]+'mg/m³</p><p>温度: '+number[13]+'℃</p><p>湿度: '+number[14]+'%</p>');
+		}
+		else{
+			$('#detailLayout').hide();
+			$('#detailLayout').html('');
+		}
+	});
+});
+</script>
