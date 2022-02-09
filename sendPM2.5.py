@@ -3,6 +3,7 @@ import os
 import serial
 import time
 import requests
+import json
 from struct import *
 
 # pip install requests
@@ -21,6 +22,11 @@ def read_pm_line(_port):
                 rv += _port.read(38)
                 return rv
 
+def writefile(filereadlines):
+    #write file
+    newfile = open('data.json', mode='w', encoding='UTF-8')
+    newfile.writelines(filereadlines)
+    newfile.close()
 
 def main():
     recv = read_pm_line(ser)
@@ -33,18 +39,19 @@ def main():
     tmp = sendData.split(' ')
     sendData = ''.join(tmp)
     url = 'http://127.0.0.1/pm25/receivePM2.5.php?pm=' + sendData[1:-1]
-    print(url)
     se = requests.Session()
     response = requests.get(url)
-    if response.status_code == 200:
-        resp = se.get(url)
-    print(sendData)
     ser.flushInput()
     time.sleep(0.1)
+
+    outputData = {'temperature':datas[13]/10,'humidity':datas[14]/10,'pm25':datas[4]}
+
+    writefile(json.dumps(outputData))
 
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        if ser != N
+        if ser != None:
+            ser.close()
