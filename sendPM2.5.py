@@ -24,7 +24,7 @@ def read_pm_line(_port):
 
 def writefile(filereadlines):
     #write file
-    newfile = open('data.json', mode='w', encoding='UTF-8')
+    newfile = open('/srv/http/pm25/data.json', mode='w', encoding='UTF-8')
     newfile.writelines(filereadlines)
     newfile.close()
 
