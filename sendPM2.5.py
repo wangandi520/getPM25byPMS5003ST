@@ -39,7 +39,6 @@ def main():
     tmp = sendData.split(' ')
     sendData = ''.join(tmp)
     url = 'http://127.0.0.1/pm25/receivePM2.5.php?pm=' + sendData[1:-1]
-    se = requests.Session()
     response = requests.get(url)
     ser.flushInput()
     time.sleep(0.1)
